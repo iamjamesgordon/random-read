@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Autocomplete from "react-google-autocomplete"
+
 
 export default function Home() {
 
+  const [place, setPlace] = useState<{ place_id: string; }>({ place_id: "" })
   const [randomBook, setRandomBook] = useState<{ author: string; title: string; amazon_product_url: string }>({ author: "", title: "", amazon_product_url: "" })
 
   async function generateRandomBook() {
+    
     const res = await fetch(`https://api.nytimes.com/svc/books/v3/lists/full-overview.json?api-key=${process.env.NEXT_PUBLIC_NYT_API_KEY}`)
     const data = await res.json()
     const randomList = await data.results.lists[Math.floor(Math.random() * data.results.lists.length)]
@@ -26,6 +29,13 @@ export default function Home() {
       </Head>
 
       <h1>Random Reads</h1>
+
+      <Autocomplete
+        apiKey={process.env.NEXT_PUBLIC_GOOGLE_AC_API_KEY}
+        onPlaceSelected={(place) => {
+          console.log(place)
+        }}
+      />
 
       <button onClick={generateRandomBook}>Generate Random Book</button>
 
